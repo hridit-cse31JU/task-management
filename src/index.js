@@ -1,39 +1,23 @@
 const express = require('express');
 const app = express();
-const port = 3000;
-const tasks = [
-    { id: 1, title: 'Learn Node.js', completed: false, priority: 'high', createdAt: new Date() },
-    { id: 2, title: 'Build REST API', completed: false, priority: 'medium', createdAt: new Date() },
-    { id: 3, title: 'Write README.md', completed: false, priority: 'low', createdAt: new Date() },
-    { id: 4, title: 'Test with Postman', completed: false, priority: 'medium', createdAt: new Date() },
-    { id: 5, title: 'Push to GitHub', completed: false, priority: 'high', createdAt: new Date() }
-];
+const tasksRouter = require('./routes/tasks'); // import router
+
+app.use(express.json());
+
+// main route
 app.get('/', (req, res) => {
-       res.send('Task Management API is running!');
-});
-app.get('/tasks', (req, res) => {
-       res.json(tasks);
+  res.send('Task Management API is running!');
 });
 
+// use router
+app.use('/', tasksRouter);
+
+// health route
 app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        uptime: process.uptime()
-    });
+  res.json({ status: "healthy", uptime: process.uptime() });
 });
 
-app.get('/task/:id', (req, res) => {
-    const taskId = parseInt(req.params.id); // get the id from URL and convert to number
-    const task = tasks.find(t => t.id === taskId); // find task with matching id
-
-    if (task) {
-        res.json(task); // task found
-    } else {
-        res.status(404).json({ error: "Task not found" }); // task not found
-    }
-});
-
-
+const port = 3000;
 app.listen(port, () => {
-       console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
